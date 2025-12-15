@@ -1,0 +1,22 @@
+# 核心LLM框架
+langchain>=0.2.0
+langchain-openai>=0.1.0
+langgraph>=0.2.0
+
+# 数据处理
+pandas>=2.0.0
+numpy>=1.24.0
+statsmodels>=0.14.0
+scipy>=1.11.0
+
+# 可视化
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# 部署与工具
+streamlit>=1.28.0
+python-dotenv>=1.0.0
+markdown2>=2.4.10
+
+# OpenAI API 兼容层（硅基流动依赖）
+openai>=1.0.0
