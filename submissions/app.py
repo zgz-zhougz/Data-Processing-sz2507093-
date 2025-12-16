@@ -6,30 +6,38 @@ from tools import DataProcessingTools
 
 # 页面配置
 st.set_page_config(
-    page_title="AI数据分析代理",
+    page_title="大模型驱动的QAR分析代理",
     page_icon="📊",
     layout="wide"
 )
 
 # 页面标题
-st.title("📊 AI驱动的大规模数据分析代理")
+st.title("📊 大模型驱动的QAR分析代理")
 st.divider()
 
 # 侧边栏上传
 with st.sidebar:
     st.header("数据上传")
-    uploaded_file = st.file_uploader("上传CSV文件", type=["csv"])
-    use_sample = st.button("使用泰坦尼克示例数据")
+    uploaded_file = st.file_uploader("上传QAR数据（CSV）", type=["csv", "bin"])
+    # 新增文件类型选择
+    file_type = st.radio("文件类型", ["csv", "bin"], index=0)
+    use_sample = st.button("使用示例QAR数据")
 
 # 主逻辑
 if uploaded_file or use_sample:
-    # 加载数据
     if use_sample:
-        df = pd.read_csv("https://raw.githubusercontent.com/datasciencedojo/datasets/master/titanic.csv")
-        st.success("✅ 加载泰坦尼克示例数据成功！")
+        # 加载示例QAR数据（CSV格式）
+        df = pd.read_csv("sample_qar_data.csv")
+        st.success("✅ 加载示例QAR数据成功！")
     else:
-        df = pd.read_csv(uploaded_file)
-        st.success(f"✅ 加载数据成功：{df.shape[0]} 行 × {df.shape[1]} 列")
+        # 保存上传文件并解析
+        with open(f"temp.{file_type}", "wb") as f:
+            f.write(uploaded_file.getbuffer())
+        tools = DataProcessingTools(pd.DataFrame())  # 临时初始化
+        df = tools.parse_qar_data(f"temp.{file_type}", file_type)
+        st.success(f"✅ 加载QAR数据成功：{df.shape[0]} 行 × {df.shape[1]} 列")
+    # 显示QAR核心字段识别结果
+    st.info(f"自动识别QAR核心字段：\n时间戳字段：{tools.qar_core_fields['timestamp']}\n飞行阶段字段：{tools.qar_core_fields['flight_phase']}")
 
     # 显示原始数据预览
     st.subheader("原始数据预览")
